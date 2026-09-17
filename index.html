@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人脸马赛克工具 · Face Mosaic</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🔒 人脸马赛克工具</h1>
+    <p class="sub">本地处理 · 视频不上传 · 隐私安全</p>
+  </header>
+
+  <section id="uploadPanel" class="panel">
+    <div id="dropZone" class="drop-zone">
+      <div class="drop-icon">🎬</div>
+      <p>点击选择视频，或拖拽视频到此处</p>
+      <p class="hint">支持 MP4 / MOV / WebM / MKV</p>
+      <input type="file" id="fileInput" accept="video/*" hidden>
+    </div>
+  </section>
+
+  <section id="workPanel" class="panel hidden">
+    <video id="preview" controls playsinline></video>
+
+    <div class="controls">
+      <label class="ctrl">
+        <span>马赛克强度 <b id="pixelVal">12</b></span>
+        <input type="range" id="pixelSize" min="4" max="40" value="12">
+      </label>
+      <label class="ctrl">
+        <span>检测灵敏度 <b id="confVal">0.5</b></span>
+        <input type="range" id="confThresh" min="0.1" max="0.9" step="0.05" value="0.5">
+      </label>
+      <label class="ctrl">
+        <span>打码范围扩展 <b id="expandVal">10</b>%</span>
+        <input type="range" id="expand" min="0" max="40" value="10">
+      </label>
+      <label class="ctrl">
+        <span>效果</span>
+        <select id="effectType">
+          <option value="mosaic">像素马赛克</option>
+          <option value="blur">高斯模糊</option>
+          <option value="black">黑块遮挡</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="actions">
+      <button id="startBtn" class="btn primary">▶ 开始处理</button>
+      <button id="cancelBtn" class="btn" disabled>取消</button>
+      <button id="resetBtn" class="btn">重新选择</button>
+    </div>
+
+    <div id="progressWrap" class="progress-wrap hidden">
+      <div class="progress-bar"><div id="progressFill"></div></div>
+      <p id="progressText">准备中…</p>
+    </div>
+
+    <canvas id="workCanvas" class="hidden"></canvas>
+  </section>
+
+  <section id="resultPanel" class="panel hidden">
+    <h2>✅ 处理完成</h2>
+    <video id="resultVideo" controls playsinline></video>
+    <div class="actions">
+      <a id="downloadBtn" class="btn primary" download="mosaic_output.webm">⬇ 下载视频</a>
+      <button id="againBtn" class="btn">处理其他视频</button>
+    </div>
+  </section>
+
+  <footer>
+    <p>纯浏览器端运行 · 基于 face-api.js · 视频不离开你的设备</p>
+  </footer>
+</div>
+<script src="face-api.min.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
