@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于我们 · 人脸马赛克工具</title>
+<meta name="description" content="关于人脸马赛克工具：为什么做这个工具、技术原理、开源说明。">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>关于我们</h1>
+    <p class="sub">一个免费、开源、隐私优先的在线工具</p>
+  </header>
+
+  <section class="panel content">
+    <h2>为什么做这个工具</h2>
+    <p>发布视频前给人脸打码，是很多人的日常需求：街拍视频要隐藏路人、
+       家长分享孩子视频要保护隐私、商家处理监控录像要遮蔽顾客面孔。
+       但常见做法要么依赖付费软件，要么把视频上传到不明服务器——后者存在隐私泄露风险。</p>
+    <p>所以我们做了这个工具：<b>把处理过程完全放在浏览器里</b>，
+       视频不离开你的设备，不注册、不收费、不限制次数。</p>
+
+    <h2>技术原理</h2>
+    <p>工具由三部分组成：</p>
+    <ol>
+      <li><b>人脸检测</b>：使用 face-api.js 的 TinyFaceDetector 模型（约 190KB），
+          逐帧扫描画面中的人脸位置。检测时先降采样到 320px 宽以内，兼顾速度与准确率。</li>
+      <li><b>打码处理</b>：在 Canvas 画布上对人脸区域做像素化降采样重绘（马赛克）、
+          多级缩放模糊，或直接覆盖黑块。</li>
+      <li><b>视频导出</b>：通过浏览器 MediaRecorder API 录制 Canvas 画面，
+          并保留原始音轨，最后生成可下载的视频文件。</li>
+    </ol>
+    <p>整个流程不涉及任何服务器端计算，断网也能正常使用。</p>
+
+    <h2>开源</h2>
+    <p>本项目完全开源（MIT 协议），代码托管在 GitHub：
+       <a href="https://github.com/haixiansheng/face-mosaic" target="_blank" rel="noopener">haixiansheng/face-mosaic</a>。
+       欢迎提交 Issue 反馈问题，或自行 Fork 二次开发。</p>
+
+    <h2>使用须知</h2>
+    <p>本工具仅供合法用途。请勿用于：</p>
+    <ul>
+      <li>伪造、篡改他人影像用于欺骗或诽谤</li>
+      <li>规避合法的监控与取证要求</li>
+      <li>任何侵犯他人合法权益的行为</li>
+    </ul>
+    <p>使用者需自行承担因不当使用产生的法律责任。</p>
+
+    <h2>免责声明</h2>
+    <p>本工具按「现状」提供，不对检测准确率做任何保证。
+       自动检测可能存在漏检（如侧脸、遮挡、极小的人脸）或误检，
+       正式发布前请人工复核处理结果。</p>
+
+    <h2>反馈与建议</h2>
+    <p>有问题或建议，欢迎在
+       <a href="https://github.com/haixiansheng/face-mosaic/issues" target="_blank" rel="noopener">GitHub Issues</a> 提出。</p>
+  </section>
+
+  <footer>
+    <nav class="foot-nav">
+      <a href="index.html">返回首页</a> ·
+      <a href="privacy.html">隐私政策</a> ·
+      <a href="https://github.com/haixiansheng/face-mosaic" target="_blank" rel="noopener">开源代码</a>
+    </nav>
+    <p class="copy">© 2026 Face Mosaic</p>
+  </footer>
+</div>
+</body>
+</html>

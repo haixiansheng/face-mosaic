@@ -3,15 +3,31 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>人脸马赛克工具 · Face Mosaic</title>
+<title>人脸马赛克工具 · 免费在线给视频人脸打码</title>
+<meta name="description" content="免费在线视频人脸马赛克工具，上传视频自动识别并给人脸打码。支持像素马赛克、高斯模糊、黑块遮挡，纯浏览器本地处理，视频不上传，隐私安全。">
+<meta name="keywords" content="人脸马赛克,视频打码,人脸模糊,视频马赛克,隐私保护,在线打码工具">
 <link rel="stylesheet" href="style.css">
+
+<!-- ============ Google AdSense ============ -->
+<!-- 通过审核后，把下面的 ca-pub-XXXXXXXXXXXXXXXX 换成你的发布商 ID，并去掉注释 -->
+<!--
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+-->
 </head>
 <body>
 <div class="app">
   <header>
     <h1>🔒 人脸马赛克工具</h1>
-    <p class="sub">本地处理 · 视频不上传 · 隐私安全</p>
+    <p class="sub">免费 · 本地处理 · 视频不上传 · 隐私安全</p>
   </header>
+
+  <!-- ============ 广告位 1：顶部横幅 ============ -->
+  <div class="ad-slot ad-top">
+    <!-- 顶部广告位（审核通过后替换成 AdSense 广告单元代码） -->
+    <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+         data-ad-slot="0000000000" data-ad-format="auto" data-full-width-responsive="true"></ins>
+    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
+  </div>
 
   <section id="uploadPanel" class="panel">
     <div id="dropZone" class="drop-zone">
@@ -71,8 +87,61 @@
     </div>
   </section>
 
+  <!-- ============ 广告位 2：流程下方 ============ -->
+  <div class="ad-slot ad-mid">
+    <!-- 中部广告位（审核通过后替换成 AdSense 广告单元代码） -->
+  </div>
+
+  <!-- ============ 内容区（SEO + AdSense 过审必需）============ -->
+  <section class="panel content">
+    <h2>📖 使用说明</h2>
+    <h3>这个工具能做什么？</h3>
+    <p>上传一段视频，工具会自动识别画面中的人脸并打上马赛克，处理完成后可下载。
+       适用于发布短视频前隐藏路人面孔、保护未成年人隐私、处理监控录像等场景。</p>
+
+    <h3>操作步骤</h3>
+    <ol>
+      <li><b>上传视频</b>：点击上传区域选择文件，或直接把视频拖进去。</li>
+      <li><b>调整参数</b>：马赛克强度（数字越大越模糊）、检测灵敏度（漏检就调低）、
+          打码范围扩展（脸打不全就调大）、效果类型（马赛克/模糊/黑块）。</li>
+      <li><b>开始处理</b>：点「开始处理」，等待进度条走完（耗时约等于视频时长）。</li>
+      <li><b>下载结果</b>：点「下载视频」保存处理后的文件。</li>
+    </ol>
+
+    <h3>常见问题</h3>
+    <p><b>Q：视频会被上传到服务器吗？</b><br>
+       A：不会。所有处理都在你的浏览器里完成，视频文件不会离开你的设备，断网也能用。</p>
+    <p><b>Q：为什么处理速度等于视频时长？</b><br>
+       A：为了保证逐帧检测不丢帧，工具采用实时处理（边播放边打码边录制），
+       所以 1 分钟的视频大约需要 1 分钟处理。</p>
+    <p><b>Q：有脸没被打码怎么办？</b><br>
+       A：把「打码范围扩展」调大到 20-30%，或把「检测灵敏度」调低到 0.3，
+       然后重新处理。侧脸、强遮挡、极小的脸识别率会偏低。</p>
+    <p><b>Q：输出是什么格式？</b><br>
+       A：默认 WebM（VP8/VP9 编码），主流播放器和社交平台都支持；
+       浏览器支持时也可能输出 MP4。</p>
+    <p><b>Q：处理到一半卡住或切页面会怎样？</b><br>
+       A：浏览器会降低后台标签页的运行频率，可能导致录制掉帧。
+       处理过程中请不要切换标签页或最小化窗口。</p>
+
+    <h3>支持的浏览器</h3>
+    <p>Chrome、Edge、Firefox、Safari 的较新版本（需支持 MediaRecorder 与 canvas 录制）。
+       推荐使用 Chrome 或 Edge 获得最佳效果。</p>
+  </section>
+
+  <!-- ============ 广告位 3：底部 ============ -->
+  <div class="ad-slot ad-bottom">
+    <!-- 底部广告位（审核通过后替换成 AdSense 广告单元代码） -->
+  </div>
+
   <footer>
     <p>纯浏览器端运行 · 基于 face-api.js · 视频不离开你的设备</p>
+    <nav class="foot-nav">
+      <a href="about.html">关于我们</a> ·
+      <a href="privacy.html">隐私政策</a> ·
+      <a href="https://github.com/haixiansheng/face-mosaic" target="_blank" rel="noopener">开源代码</a>
+    </nav>
+    <p class="copy">© 2026 Face Mosaic · 本工具仅供合法用途，请勿用于侵犯他人隐私</p>
   </footer>
 </div>
 <script src="face-api.min.js"></script>

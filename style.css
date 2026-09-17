@@ -84,3 +84,45 @@ select {
 #progressText { font-size: 13px; color: var(--muted); margin-top: 8px; }
 footer { text-align: center; color: var(--muted); font-size: 12px; margin-top: 24px; }
 h2 { font-size: 18px; margin-bottom: 14px; }
+
+/* ===== 广告位 ===== */
+.ad-slot {
+  margin: 18px 0;
+  min-height: 90px;          /* 预留高度，避免广告加载时页面跳动 */
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+/* 未放广告时显示淡色占位（审核通过后可删掉这段） */
+.ad-slot:empty::after {
+  content: "广告位";
+  color: #3a4152;
+  font-size: 12px;
+  letter-spacing: 2px;
+  border: 1px dashed #262b36;
+  border-radius: 10px;
+  padding: 26px 60px;
+  width: 100%;
+  text-align: center;
+}
+.ad-top { min-height: 100px; }
+
+/* ===== 内容区（SEO / 过审用）===== */
+.content { font-size: 14px; line-height: 1.85; color: #c3c9d6; }
+.content h2 { margin: 22px 0 10px; color: var(--text); font-size: 17px; }
+.content h2:first-child { margin-top: 0; }
+.content h3 { margin: 18px 0 8px; color: var(--text); font-size: 15px; }
+.content p { margin: 8px 0; }
+.content ol, .content ul { margin: 8px 0 8px 22px; }
+.content li { margin: 5px 0; }
+.content a { color: var(--primary); text-decoration: none; }
+.content a:hover { text-decoration: underline; }
+.content b { color: var(--text); }
+
+/* ===== 页脚导航 ===== */
+.foot-nav { margin-top: 10px; font-size: 12px; }
+.foot-nav a { color: var(--muted); text-decoration: none; }
+.foot-nav a:hover { color: var(--primary); }
+.copy { margin-top: 8px; font-size: 11px; color: #5a6377; }
