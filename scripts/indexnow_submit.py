@@ -10,9 +10,15 @@ SITE = f"https://{HOST}/face-mosaic"
 
 URLS = [
     f"{SITE}/",
+    f"{SITE}/blog/",
+    f"{SITE}/blog/how-to-blur-faces.html",
+    f"{SITE}/blog/face-blur-law-and-privacy.html",
     f"{SITE}/about.html",
     f"{SITE}/privacy.html",
     f"{SITE}/en/",
+    f"{SITE}/en/blog/",
+    f"{SITE}/en/blog/how-to-blur-faces.html",
+    f"{SITE}/en/blog/face-blur-law-and-privacy.html",
     f"{SITE}/en/about.html",
     f"{SITE}/en/privacy.html",
 ]
