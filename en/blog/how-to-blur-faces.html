@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>How to Blur Faces in Photos: 5 Methods Compared · Face Mosaic Tool</title>
+<meta name="description" content="Manual brushing vs automatic detection vs full blur vs cropping vs stickers — speed, reliability and best use for each, plus how to choose between mosaic, blur and black box.">
+<link rel="canonical" href="https://haixiansheng.github.io/face-mosaic/en/blog/how-to-blur-faces.html" />
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>How to Blur Faces in Photos: 5 Methods Compared</h1>
+    <p class="sub">Manual brushing vs automatic detection vs full blur vs cropping vs sti</p>
+  </header>
+  <section class="panel content article">
+
+    <p class="article-meta">2026-09-17 · ~1100 words · 5 min read</p>
+
+    <p>Blurring a face in a photo looks trivial — drop a mosaic on it and you're done. In
+       practice it isn't: the patch is misaligned, it's too small and half a face shows,
+       it's so heavy the whole photo is ruined, or someone in the corner gets missed entirely.
+       Here is every mainstream approach compared, so you can pick the right one per scenario.</p>
+
+    <h2>Method 1 — Manual brushing (any photo editor)</h2>
+    <ul>
+      <li><b>Pros</b>: full control; nothing missed, nothing overdone.</li>
+      <li><b>Cons</b>: slow. A group photo with seven faces takes minutes and is easy to misplace.</li>
+      <li><b>Best for</b>: one or two images, or faces clustered in one area.</li>
+    </ul>
+    <p><b>Critical caveat</b>: the most common manual error is making the patch
+       <b>too small</b>. It must cover the full facial region (brows, eyes, nose, mouth, jawline).
+       Covering only the eyes is ineffective — recognition works on the whole face, and half a
+       face is still a face.</p>
+
+    <h2>Method 2 — Automatic face detection (recommended)</h2>
+    <p>A detection model locates faces and blurs them for you. This is what our
+       <a href="../index.html">face mosaic tool</a> does.</p>
+    <ul>
+      <li><b>Pros</b>: seconds per image, and nothing in the corners gets skipped — the model
+          scans the whole frame rather than what your eye happens to notice.</li>
+      <li><b>Cons</b>: depends on detection recall; profiles, heavy occlusion and very small
+          faces can be missed.</li>
+      <li><b>Best for</b>: almost everything, especially group shots, street photos and
+          surveillance stills.</li>
+    </ul>
+    <p><b>Critical caveat</b>: <b>always do a human pass afterwards</b>. That's not a knock on
+       the tool — no detector has 100% recall. Scan the result, and if you spot a miss,
+       increase the "blur padding" and reprocess.</p>
+
+    <h2>Method 3 — Blur the entire photo</h2>
+    <ul>
+      <li><b>Pros</b>: cannot miss anything; the safest option.</li>
+      <li><b>Cons</b>: the photo is unusable as a photo.</li>
+      <li><b>Best for</b>: proving "I captured it" without exposing any detail.</li>
+    </ul>
+
+    <h2>Method 4 — Crop it out</h2>
+    <ul>
+      <li><b>Pros</b>: zero risk and absolute — the face isn't in the frame at all.</li>
+      <li><b>Cons</b>: loses composition; may cut your subject too.</li>
+      <li><b>Best for</b>: bystanders near the edges.</li>
+    </ul>
+    <p>Practical rule: <b>crop edge bystanders, blur the people inside the frame.</b>
+       That preserves composition and reduces work.</p>
+
+    <h2>Method 5 — Stickers and emoji</h2>
+    <ul>
+      <li><b>Pros</b>: fast, natively supported by social apps, and fun.</li>
+      <li><b>Cons</b>: stickers are rectangular or irregular, so <b>edges leak</b>. They also
+          draw attention to the very spot you're hiding.</li>
+      <li><b>Best for</b>: casual social posting, not serious privacy protection.</li>
+    </ul>
+    <p><b>Risk note</b>: a partly-covering sticker leaves jaw, ear or hairline visible, which
+       can still be identifiable. If the goal is real privacy, <b>don't use stickers</b>.</p>
+
+    <h2>Side-by-side comparison</h2>
+    <table class="compare-table">
+      <thead>
+        <tr><th>Method</th><th>Speed</th><th>Reliability</th><th>Quality loss</th><th>Best for</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Manual brushing</td><td>Slow</td><td>High (human-dependent)</td><td>None</td><td>1–2 images, careful work</td></tr>
+        <tr><td><b>Auto detection</b></td><td><b>Seconds</b></td><td>Good (verify after)</td><td>None</td><td><b>Group / street / bulk (recommended)</b></td></tr>
+        <tr><td>Blur whole photo</td><td>Fast</td><td>100%</td><td>Photo unusable</td><td>Proof-of-capture only</td></tr>
+        <tr><td>Crop out</td><td>Fast</td><td>100%</td><td>Composition damaged</td><td>Edge bystanders</td></tr>
+        <tr><td>Stickers</td><td>Fast</td><td>Low (edges leak)</td><td>None</td><td>Casual social</td></tr>
+      </tbody>
+    </table>
+
+    <h2>Choosing between the three censor effects</h2>
+    <ul>
+      <li><b>Pixel mosaic</b> — the classic look. Signals "intentionally redacted". Enough
+          strength that features are unrecognisable is sufficient; extreme blocking isn't needed.</li>
+      <li><b>Gaussian blur</b> — softer, less jarring, suits documentary or portrait styles.
+          ⚠️ <b>Note</b>: light blur can be partially reversed by research-grade
+          deblurring. For serious privacy, push the strength up.</li>
+      <li><b>Black box</b> — absolute, no residual information, also the most conspicuous.
+          Right for IDs, forms, or anywhere you must make the redaction explicit.</li>
+    </ul>
+    <p><b>Safety ranking</b>: black box &gt; strong mosaic &gt; strong blur &gt;&gt; weak blur.</p>
+
+    <h2>Four details people miss</h2>
+    <ol>
+      <li><b>Pad the box — don't hug the face tightly.</b> Detectors return a tight box around
+          features, but hair, ears, neck and jawline are identifying too. Expanding by
+          <b>10–20%</b> is usually right.</li>
+      <li><b>Reflections count.</b> Faces in mirrors, screens and water are still faces.
+          Detection often catches them, but strong perspective distortion can defeat it.</li>
+      <li><b>In video stills, faces may be distorted.</b> Motion stretching shifts detection
+          boxes off-centre.</li>
+      <li><b>Your redacted output can still carry EXIF.</b> Check that location metadata is
+          stripped when exporting (our tool redraws via Canvas, which drops EXIF
+          automatically).</li>
+    </ol>
+
+    <h2>Try it</h2>
+    <p>Our <a href="../index.html">face mosaic tool</a> runs entirely in your browser — the image
+       is never uploaded. It detects and blurs automatically, and
+       <b>re-renders instantly as you change settings</b>, so you can dial "blur padding" while
+       watching the result. Three effects: mosaic, blur, black box.</p>
+
+  </section>
+  <div class="ad-slot ad-bottom"></div>
+  <footer>
+    <nav class="foot-nav">
+      <a href="../index.html">Back to the tool</a> ·
+      <a href="index.html">All articles</a> ·
+      <a href="../about.html">About</a> ·
+      <a href="../privacy.html">Privacy Policy</a>
+    </nav>
+    <p class="copy">© 2026 Face Mosaic</p>
+  </footer>
+</div>
+</body>
+</html>

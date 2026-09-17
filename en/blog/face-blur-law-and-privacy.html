@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Face Blurring, Privacy and the Law: What to Know Before Posting · Face Mosaic Tool</title>
+<meta name="description" content="How the law treats facial data, four high-risk publishing scenarios, five common misconceptions, and a minimum-operations checklist.">
+<link rel="canonical" href="https://haixiansheng.github.io/face-mosaic/en/blog/face-blur-law-and-privacy.html" />
+<link rel="stylesheet" href="../../style.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>Face Blurring, Privacy and the Law: What to Know Before Posting</h1>
+    <p class="sub">How the law treats facial data, four high-risk publishing scenarios, f</p>
+  </header>
+  <section class="panel content article">
+
+    <p class="article-meta">2026-09-17 · ~1050 words · 5 min read</p>
+
+    <p>"Can I get in trouble for posting a photo with someone else's face in it?" It's a common
+       hesitation. This article covers how the law treats facial data, the four highest-risk
+       scenarios, and a minimum-operations checklist you can just follow.</p>
+    <p class="article-note">⚠️ General information, not legal advice. Consult a qualified
+       lawyer for specific situations.</p>
+
+    <h2>1. Why facial data is regulated separately</h2>
+    <p>Unlike a name or an ID number, a face is <b>public, unchangeable, and capturable from a
+       distance</b>. A leaked password can be reset; a leaked face cannot. Because of that
+       irreversibility, facial data is widely classified as
+       <b>sensitive personal information</b>, held to a stricter standard than ordinary
+       personal data.</p>
+    <p>Under regimes like the GDPR (Art. 9) and China's PIPL, processing biometric data
+       generally requires <b>explicit, separate consent</b> plus a specific purpose and
+       necessity. So "I took the photo, therefore I can publish it" <b>does not hold</b>.</p>
+
+    <h2>2. Four high-risk scenarios</h2>
+
+    <h3>1. Street photography and bystanders</h3>
+    <p>A bystander's likeness is their personal data even in a public place. Whether publishing
+       is lawful depends on purpose, commercial use and harm — but <b>publishing a clearly
+       identifiable stranger's face</b> leaves you in a weak position if they object.</p>
+    <p><b>Do</b>: blur or crop non-subject faces before publishing. Cheapest, safest option.</p>
+
+    <h3>2. Minors</h3>
+    <p>Children's data attracts a higher standard of protection. Even with a parent present,
+       get consent before posting photos containing other people's children.</p>
+    <p><b>Do</b>: blur their faces, or shoot from behind / in profile only.</p>
+
+    <h3>3. CCTV and access-control stills</h3>
+    <p>Posting surveillance frames ("catch this thief", "help me find them") is risky: it can
+       infringe likeness and personal-data rights, and if you identify the wrong person it can
+       amount to <b>defamation</b>. The correct route is <b>handing footage to the police</b>,
+       not publishing it yourself.</p>
+
+    <h3>4. Work contexts — customers, patients, colleagues</h3>
+    <p>Marketing photos, medical case images, before/after renovation shots: faces appearing
+       in commercial promotion normally need signed permission. Unauthorised commercial use is
+       the highest-risk case.</p>
+
+    <h2>3. Common misconceptions</h2>
+    <table class="compare-table">
+      <thead><tr><th>Belief</th><th>Reality</th></tr></thead>
+      <tbody>
+        <tr><td>"Public place = free to publish"</td><td>❌ Public space is not a waiver of likeness or data rights</td></tr>
+        <tr><td>"I'm not making money, so it's fine"</td><td>❌ Non-commercial use can still infringe</td></tr>
+        <tr><td>"A small friends-only post is harmless"</td><td>⚠️ Limited reach reduces liability, but doesn't make it lawful</td></tr>
+        <tr><td>"Once blurred, it's totally safe"</td><td>⚠️ Blurring cuts risk sharply but clothing, scene and build can still identify someone</td></tr>
+        <tr><td>"If they never notice, it's fine"</td><td>❌ Being pursued and being unlawful are different things</td></tr>
+      </tbody>
+    </table>
+
+    <h2>4. A checklist you can actually follow</h2>
+    <ol>
+      <li><b>Blur or crop every non-subject person.</b> Don't deliberate case by case —
+          <b>default to blurring</b>. It costs seconds and removes the judgement call.</li>
+      <li><b>Cover the whole face.</b> Eyes-only is ineffective. Cover brows, eyes, nose, mouth,
+          jaw, and pad outward 10–20% to include hair and ears.</li>
+      <li><b>Extra care with minors.</b> Default to blurring, or shoot from behind.</li>
+      <li><b>Hand suspected-crime footage to police.</b> Don't self-publish "exposés".</li>
+      <li><b>Get permission first for commercial use.</b> Blurring doesn't replace consent —
+          if the person is the subject, a blurred subject means the photo has no purpose,
+          which tells you consent was needed all along.</li>
+    </ol>
+
+    <h2>5. The irony: blurring tools can leak the very faces you're protecting</h2>
+    <p>Many online face-blurring tools require you to <b>upload the photo to their server
+       first</b> — while the thing you're protecting is exactly the faces in that photo.</p>
+    <p>Worse, such services aggregate enormous volumes of facial imagery. One breach affects
+       far more people than your single post ever would.</p>
+
+    <h3>How to check a tool in 30 seconds</h3>
+    <ol>
+      <li>Open the tool and press <b>F12</b> → <b>Network</b> panel</li>
+      <li>Clear the log, then process an image</li>
+      <li>Look for a large <code>POST</code> going out</li>
+    </ol>
+    <p>A large POST → your image was uploaded. Static assets only → it stayed local.</p>
+    <p>Even more direct: <b>disconnect your network</b> after the page loads, then process an
+       image. If it still works, the computation is local.</p>
+
+    <h2>6. Try it</h2>
+    <p>Our <a href="../index.html">face mosaic tool</a> has no backend — images are never
+       uploaded, and you can verify that with the offline test above. Three effects
+       (mosaic / blur / black box) plus adjustable padding so hair and ears get covered.</p>
+    <p>When handling photos of other people, make it a habit: <b>blur first, publish second</b>,
+       and never route them through an upload-based tool in between.</p>
+
+  </section>
+  <div class="ad-slot ad-bottom"></div>
+  <footer>
+    <nav class="foot-nav">
+      <a href="../index.html">Back to the tool</a> ·
+      <a href="index.html">All articles</a> ·
+      <a href="../about.html">About</a> ·
+      <a href="../privacy.html">Privacy Policy</a>
+    </nav>
+    <p class="copy">© 2026 Face Mosaic</p>
+  </footer>
+</div>
+</body>
+</html>
