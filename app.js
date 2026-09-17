@@ -1,6 +1,10 @@
 /* 人脸马赛克工具（图片版）—— 纯浏览器端
- * 流程: 选择图片 → 人脸检测 → 打码 → 下载
- * 图片单帧处理，毫秒级完成。
+ * 流程: 选择图片 → 人脸检测(多尺度) → 打码 → 下载
+ *
+ * 检测方案:
+ *  - 模型二选一: SSD MobileNetV1(精准, 默认) / TinyFaceDetector(极速)
+ *  - 多尺度: 全图检测 + 大图分块检测(2x2 重叠) → NMS 去重
+ *  - 解决小脸漏检: 不再把整图硬压到 640px
  */
 'use strict';
 
@@ -15,9 +19,10 @@ const I18N = {
     modelNotReady: '模型还在加载，请稍候…',
     detecting: '检测中…',
     facesFound: n => `检测到 ${n} 张人脸`,
-    noFace: '未检测到人脸（可降低"检测灵敏度"后重试）',
+    noFace: '未检测到人脸（试试降低"检测灵敏度"，或换"精准模式"）',
     done: '✅ 处理完成',
     download: '⬇ 下载图片',
+    modelLoadingWait: '模型加载中…',
   },
   en: {
     loadingModel: 'Loading face detection model…',
@@ -26,9 +31,10 @@ const I18N = {
     modelNotReady: 'Model is still loading, please wait…',
     detecting: 'Detecting…',
     facesFound: n => `Detected ${n} face(s)`,
-    noFace: 'No faces detected (try lowering "Detection sensitivity")',
+    noFace: 'No faces detected (try lowering "Detection sensitivity" or using Accurate mode)',
     done: '✅ Done',
     download: '⬇ Download image',
+    modelLoadingWait: 'Loading model…',
   },
 };
 const LANG = (document.documentElement.lang || 'zh').toLowerCase().startsWith('en') ? 'en' : 'zh';
@@ -41,31 +47,45 @@ const els = {
   pixelSize: $('pixelSize'), pixelVal: $('pixelVal'),
   confThresh: $('confThresh'), confVal: $('confVal'),
   expand: $('expand'), expandVal: $('expandVal'),
-  effectType: $('effectType'),
+  effectType: $('effectType'), modelMode: $('modelMode'),
   faceInfo: $('faceInfo'), downloadBtn: $('downloadBtn'),
-  resetBtn: $('resetBtn'), sliderRow: $('sliderRow'),
+  resetBtn: $('resetBtn'),
 };
 
 const state = {
-  modelReady: false,
-  img: null,          // 原始 Image 对象
-  faceBoxes: [],      // 归一化人脸框
+  ready: { ssd: false, tiny: false },
+  loading: {},
+  img: null,
   resultUrl: null,
   fileName: 'image',
+  busy: false,
 };
 
-/* ---------- 1. 加载模型 ---------- */
-async function loadModel() {
-  try {
-    await faceapi.nets.tinyFaceDetector.loadFromUri('./models');
-    state.modelReady = true;
-    window.__modelReady = true;
-    console.log('[model] loaded');
-  } catch (e) {
-    console.error('[model] fail', e);
-    window.__modelError = String(e && e.message || e);
-    alert(T.modelFail + '\n' + e.message);
-  }
+/* ---------- 1. 模型加载（按需懒加载） ---------- */
+async function ensureModel(mode) {
+  const key = mode === 'fast' ? 'tiny' : 'ssd';
+  if (state.ready[key]) return true;
+  if (state.loading[key]) { await state.loading[key]; return state.ready[key]; }
+  els.faceInfo.textContent = T.loadingModel;
+  state.loading[key] = (async () => {
+    try {
+      if (key === 'ssd') {
+        await faceapi.nets.ssdMobilenetv1.loadFromUri('./models');
+      } else {
+        await faceapi.nets.tinyFaceDetector.loadFromUri('./models');
+      }
+      state.ready[key] = true;
+      window.__modelReady = true;
+      console.log('[model] loaded:', key);
+    } catch (e) {
+      console.error('[model] fail', key, e);
+      window.__modelError = String(e && e.message || e);
+      alert(T.modelFail + '\n' + e.message);
+      throw e;
+    }
+  })();
+  await state.loading[key];
+  return state.ready[key];
 }
 
 /* ---------- 2. 选择图片 ---------- */
@@ -78,7 +98,7 @@ els.dropZone.addEventListener('drop', e => {
 });
 els.fileInput.addEventListener('change', e => { const f = e.target.files[0]; if (f) handleFile(f); });
 
-/* 剪贴板粘贴支持 */
+/* 剪贴板粘贴 */
 document.addEventListener('paste', e => {
   const items = (e.clipboardData || {}).items || [];
   for (const it of items) {
@@ -110,17 +130,24 @@ function handleFile(file) {
 }
 
 /* ---------- 3. 参数 ---------- */
-els.pixelSize.addEventListener('input', () => { els.pixelVal.textContent = els.pixelSize.value; process(); });
-els.confThresh.addEventListener('input', () => { els.confVal.textContent = els.confThresh.value; process(); });
-els.expand.addEventListener('input', () => { els.expandVal.textContent = els.expand.value; process(); });
+let debounceTimer = null;
+function scheduleProcess() {
+  clearTimeout(debounceTimer);
+  debounceTimer = setTimeout(process, 180);
+}
+els.pixelSize.addEventListener('input', () => { els.pixelVal.textContent = els.pixelSize.value; scheduleProcess(); });
+els.confThresh.addEventListener('input', () => { els.confVal.textContent = els.confThresh.value; scheduleProcess(); });
+els.expand.addEventListener('input', () => { els.expandVal.textContent = els.expand.value; scheduleProcess(); });
 els.effectType.addEventListener('change', process);
+if (els.modelMode) els.modelMode.addEventListener('change', process);
 els.resetBtn.addEventListener('click', resetAll);
 
 /* ---------- 4. 打码绘制 ---------- */
 function drawMosaic(ctx, x, y, w, h, blockSize, effect) {
   const canvas = ctx.canvas;
   x = Math.max(0, Math.floor(x)); y = Math.max(0, Math.floor(y));
-  w = Math.floor(Math.min(w, canvas.width - x)); h = Math.floor(Math.min(h, canvas.height - y));
+  w = Math.floor(Math.min(w, canvas.width - x));
+  h = Math.floor(Math.min(h, canvas.height - y));
   if (w <= 1 || h <= 1) return;
 
   if (effect === 'black') {
@@ -138,7 +165,6 @@ function drawMosaic(ctx, x, y, w, h, blockSize, effect) {
     ctx.drawImage(tmp, 0, 0, tmp.width, tmp.height, x, y, w, h);
     return;
   }
-  // 像素马赛克
   const cols = Math.max(1, Math.floor(w / blockSize));
   const rows = Math.max(1, Math.floor(h / blockSize));
   tmp.width = cols; tmp.height = rows;
@@ -148,73 +174,139 @@ function drawMosaic(ctx, x, y, w, h, blockSize, effect) {
   ctx.imageSmoothingEnabled = true;
 }
 
-/* ---------- 5. 主处理（图片，瞬间完成） ---------- */
-let processing = false;
+/* ---------- 5. 多尺度人脸检测 ---------- */
+const DET_MAX = 1024;   // 单次检测输入最长边上限（越大越准越慢）
+
+/** 对源图的一个区域做一次检测，返回原图坐标的框 */
+async function detectRegion(srcCanvas, region, mode, threshold) {
+  const { x, y, w, h } = region;
+  const s = Math.min(1, DET_MAX / Math.max(w, h));
+  const sw = Math.max(1, Math.round(w * s)), sh = Math.max(1, Math.round(h * s));
+  const c = document.createElement('canvas');
+  c.width = sw; c.height = sh;
+  c.getContext('2d').drawImage(srcCanvas, x, y, w, h, 0, 0, sw, sh);
+
+  let dets = [];
+  try {
+    if (mode === 'fast') {
+      dets = await faceapi.detectAllFaces(c, new faceapi.TinyFaceDetectorOptions({
+        inputSize: 416, scoreThreshold: threshold,
+      }));
+    } else {
+      dets = await faceapi.detectAllFaces(c, new faceapi.SsdMobilenetv1Options({
+        minConfidence: threshold,
+      }));
+    }
+  } catch (e) { console.warn('[detect]', e); }
+
+  const sx = w / sw, sy = h / sh;
+  return dets.map(d => ({
+    x: x + d.box.x * sx,
+    y: y + d.box.y * sy,
+    w: d.box.width * sx,
+    h: d.box.height * sy,
+    score: d.score || 0.9,
+  }));
+}
+
+function iou(a, b) {
+  const x1 = Math.max(a.x, b.x), y1 = Math.max(a.y, b.y);
+  const x2 = Math.min(a.x + a.w, b.x + b.w), y2 = Math.min(a.y + a.h, b.y + b.h);
+  const iw = Math.max(0, x2 - x1), ih = Math.max(0, y2 - y1);
+  const inter = iw * ih;
+  return inter / (a.w * a.h + b.w * b.h - inter + 1e-6);
+}
+
+function nms(boxes, th = 0.35) {
+  const sorted = [...boxes].sort((a, b) => b.score - a.score);
+  const keep = [];
+  for (const b of sorted) {
+    if (keep.every(k => iou(b, k) < th)) keep.push(b);
+  }
+  return keep;
+}
+
+/** 全图 + 分块 多尺度检测 */
+async function detectFaces(srcCanvas, mode, threshold) {
+  const W = srcCanvas.width, H = srcCanvas.height;
+  let all = await detectRegion(srcCanvas, { x: 0, y: 0, w: W, h: H }, mode, threshold);
+
+  // 大图才做分块（增加小脸召回）
+  if (Math.max(W, H) > 1200) {
+    const tiles = Math.max(W, H) > 2400 ? 3 : 2;
+    const tw = Math.round(W / tiles * 1.25);
+    const th = Math.round(H / tiles * 1.25);
+    const jobs = [];
+    for (let ty = 0; ty < tiles; ty++) {
+      for (let tx = 0; tx < tiles; tx++) {
+        const x = Math.max(0, Math.min(W - tw, Math.round(tx * W / tiles)));
+        const y = Math.max(0, Math.min(H - th, Math.round(ty * H / tiles)));
+        jobs.push(detectRegion(srcCanvas, { x, y, w: Math.min(tw, W - x), h: Math.min(th, H - y) }, mode, threshold));
+      }
+    }
+    const res = await Promise.all(jobs);
+    for (const r of res) all = all.concat(r);
+  }
+  return nms(all, 0.35);
+}
+
+/* ---------- 6. 主处理 ---------- */
 async function process() {
-  if (!state.modelReady) { els.faceInfo.textContent = T.modelNotReady; return; }
-  if (!state.img || processing) return;
-  processing = true;
+  if (!state.img || state.busy) return;
+  const mode = els.modelMode ? els.modelMode.value : 'accurate';
+  if (!state.ready[mode === 'fast' ? 'tiny' : 'ssd']) {
+    els.faceInfo.textContent = T.modelLoadingWait;
+    try { await ensureModel(mode); } catch (e) { return; }
+  }
+  state.busy = true;
   els.faceInfo.textContent = T.detecting;
 
   const canvas = els.resultCanvas;
   const ctx = canvas.getContext('2d', { willReadFrequently: true });
-  // 1) 画原图
   ctx.drawImage(state.img, 0, 0, canvas.width, canvas.height);
 
-  // 2) 检测（降采样到最长边 640，提速）
-  const MAXW = 640;
-  const scale = Math.min(1, MAXW / Math.max(canvas.width, canvas.height));
-  const dw = Math.round(canvas.width * scale), dh = Math.round(canvas.height * scale);
-  const det = document.createElement('canvas');
-  det.width = dw; det.height = dh;
-  det.getContext('2d').drawImage(canvas, 0, 0, dw, dh);
-
-  let dets = [];
+  const threshold = parseFloat(els.confThresh.value);
+  const t0 = performance.now();
+  let boxes = [];
   try {
-    dets = await faceapi.detectAllFaces(det,
-      new faceapi.TinyFaceDetectorOptions({
-        inputSize: 416,
-        scoreThreshold: parseFloat(els.confThresh.value),
-      }));
+    boxes = await detectFaces(canvas, mode, threshold);
   } catch (e) { console.warn(e); }
+  const ms = Math.round(performance.now() - t0);
 
-  // 3) 打码
   const blockSize = parseInt(els.pixelSize.value, 10);
   const expandPct = parseInt(els.expand.value, 10) / 100;
   const effect = els.effectType.value;
-  const inv = canvas.width / dw;   // 检测图 → 原图比例
 
-  for (const d of dets) {
-    const b = d.box;
-    let x = b.x * inv, y = b.y * inv, w = b.width * inv, h = b.height * inv;
-    const ex = w * expandPct, ey = h * expandPct;
-    x -= ex; y -= ey; w += ex * 2; h += ey * 2;
-    drawMosaic(ctx, x, y, w, h, blockSize, effect);
+  for (const b of boxes) {
+    const ex = b.w * expandPct, ey = b.h * expandPct;
+    drawMosaic(ctx, b.x - ex, b.y - ey, b.w + ex * 2, b.h + ey * 2, blockSize, effect);
   }
 
-  state.faceBoxes = dets;
-  els.faceInfo.textContent = dets.length ? T.facesFound(dets.length) : T.noFace;
+  els.faceInfo.textContent = boxes.length
+    ? `${T.facesFound(boxes.length)} · ${ms}ms`
+    : T.noFace;
 
-  // 4) 导出
   canvas.toBlob(blob => {
-    if (!blob) return;
-    if (state.resultUrl) URL.revokeObjectURL(state.resultUrl);
-    state.resultUrl = URL.createObjectURL(blob);
-    els.downloadBtn.href = state.resultUrl;
-    els.downloadBtn.download = `${state.fileName}_mosaic.jpg`;
-    els.downloadBtn.textContent = T.download;
-    processing = false;
+    if (blob) {
+      if (state.resultUrl) URL.revokeObjectURL(state.resultUrl);
+      state.resultUrl = URL.createObjectURL(blob);
+      els.downloadBtn.href = state.resultUrl;
+      els.downloadBtn.download = `${state.fileName}_mosaic.jpg`;
+    }
+    state.busy = false;
   }, 'image/jpeg', 0.95);
+
+  window.__lastBoxes = boxes;
 }
 
-/* ---------- 6. 重置 ---------- */
+/* ---------- 7. 重置 ---------- */
 function resetAll() {
   if (state.resultUrl) URL.revokeObjectURL(state.resultUrl);
-  state.img = null; state.resultUrl = null; state.faceBoxes = [];
+  state.img = null; state.resultUrl = null;
   els.fileInput.value = '';
   els.workPanel.classList.add('hidden');
   els.uploadPanel.classList.remove('hidden');
 }
 
 /* ---------- init ---------- */
-loadModel();
+ensureModel('accurate');

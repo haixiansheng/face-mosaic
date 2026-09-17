@@ -56,12 +56,19 @@
 
     <div class="controls" id="sliderRow">
       <label class="ctrl">
+        <span>检测模式</span>
+        <select id="modelMode">
+          <option value="accurate">精准模式（推荐）</option>
+          <option value="fast">极速模式</option>
+        </select>
+      </label>
+      <label class="ctrl">
         <span>马赛克强度 <b id="pixelVal">12</b></span>
         <input type="range" id="pixelSize" min="4" max="40" value="12">
       </label>
       <label class="ctrl">
-        <span>检测灵敏度 <b id="confVal">0.5</b></span>
-        <input type="range" id="confThresh" min="0.1" max="0.9" step="0.05" value="0.5">
+        <span>检测灵敏度 <b id="confVal">0.4</b></span>
+        <input type="range" id="confThresh" min="0.1" max="0.9" step="0.05" value="0.4">
       </label>
       <label class="ctrl">
         <span>打码范围扩展 <b id="expandVal">10</b>%</span>
@@ -173,8 +180,12 @@
     <p><b>Q：为什么比视频工具快这么多？</b><br>
        A：图片只需处理一帧，而视频要逐帧处理并实时录制编码。所以本工具毫秒级出结果。</p>
     <p><b>Q：有脸没被打码怎么办？</b><br>
-       A：把「打码范围扩展」调大到 20-30%，或把「检测灵敏度」调低到 0.3。
-       侧脸、强遮挡、极小的脸识别率会偏低。</p>
+       A：按这个顺序试：① 确认「检测模式」选的是<b>精准模式</b>（默认，用 SSD 模型）；
+       ② 把「检测灵敏度」调低到 0.3；③ 把「打码范围扩展」调大到 20-30%。
+       大图会自动分块检测以提升小脸召回，侧脸与强遮挡仍可能漏检。</p>
+    <p><b>Q：精准模式和极速模式有什么区别？</b><br>
+       A：精准模式用 SSD MobileNetV1 模型（约 5.4MB），对小脸、侧脸召回明显更好，推荐日常使用；
+       极速模式用 TinyFaceDetector（193KB），加载快、内存省，适合近景正脸或低配设备。</p>
     <p><b>Q：会压缩画质吗？</b><br>
        A：不会降低分辨率，输出保持原图尺寸，以 JPEG 高质量（95%）保存。</p>
     <p><b>Q：支持一次处理多张吗？</b><br>

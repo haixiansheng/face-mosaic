@@ -54,12 +54,19 @@
 
     <div class="controls" id="sliderRow">
       <label class="ctrl">
+        <span>Detection mode</span>
+        <select id="modelMode">
+          <option value="accurate">Accurate (recommended)</option>
+          <option value="fast">Fast</option>
+        </select>
+      </label>
+      <label class="ctrl">
         <span>Mosaic strength <b id="pixelVal">12</b></span>
         <input type="range" id="pixelSize" min="4" max="40" value="12">
       </label>
       <label class="ctrl">
-        <span>Detection sensitivity <b id="confVal">0.5</b></span>
-        <input type="range" id="confThresh" min="0.1" max="0.9" step="0.05" value="0.5">
+        <span>Detection sensitivity <b id="confVal">0.4</b></span>
+        <input type="range" id="confThresh" min="0.1" max="0.9" step="0.05" value="0.4">
       </label>
       <label class="ctrl">
         <span>Blur area padding <b id="expandVal">10</b>%</span>
@@ -173,8 +180,13 @@
        A: A photo is a single frame, whereas video requires per-frame processing and real-time
        encoding. That's why this tool returns a result in milliseconds.</p>
     <p><b>Q: Some faces were not blurred. What should I do?</b><br>
-       A: Increase “Blur area padding” to 20–30%, or lower “Detection sensitivity” to 0.3.
-       Profiles, heavy occlusion and very small faces are harder to detect.</p>
+       A: Try, in order: ① make sure “Detection mode” is set to <b>Accurate</b> (the default, SSD model);
+       ② lower “Detection sensitivity” to 0.3; ③ increase “Blur area padding” to 20–30%.
+       Large images are automatically tiled to catch small faces; profiles and heavy occlusion may still be missed.</p>
+    <p><b>Q: What is the difference between Accurate and Fast mode?</b><br>
+       A: Accurate uses SSD MobileNetV1 (~5.4 MB) and is clearly better on small and profile faces —
+       recommended for everyday use. Fast uses TinyFaceDetector (193 KB): quick to load and light on
+       memory, best for close-up frontal faces or low-end devices.</p>
     <p><b>Q: Does it reduce image quality?</b><br>
        A: No downscaling. Output keeps the original dimensions, saved as high-quality JPEG (95%).</p>
     <p><b>Q: Can I process multiple images at once?</b><br>
