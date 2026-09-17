@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>人脸马赛克工具 · 免费在线给视频人脸打码</title>
-<meta name="description" content="免费在线视频人脸马赛克工具，上传视频自动识别并给人脸打码。支持像素马赛克、高斯模糊、黑块遮挡，纯浏览器本地处理，视频不上传，隐私安全。">
-<meta name="keywords" content="人脸马赛克,视频打码,人脸模糊,视频马赛克,隐私保护,在线打码工具">
+<title>人脸马赛克工具 · 免费在线给图片人脸打码</title>
+<meta name="description" content="免费在线人脸马赛克工具，上传图片自动识别人脸并打码，支持像素马赛克、高斯模糊、黑块遮挡，毫秒级完成。纯浏览器本地处理，图片不上传，隐私安全。">
+<meta name="keywords" content="人脸马赛克,图片打码,人脸模糊,图片马赛克,隐私保护,在线打码工具,照片打码">
 <link rel="alternate" hreflang="zh-CN" href="https://haixiansheng.github.io/face-mosaic/" />
 <link rel="alternate" hreflang="en" href="https://haixiansheng.github.io/face-mosaic/en/" />
 <link rel="alternate" hreflang="x-default" href="https://haixiansheng.github.io/face-mosaic/en/" />
@@ -21,13 +21,13 @@
 <div class="app">
   <header>
     <h1>🔒 人脸马赛克工具</h1>
-    <p class="sub">免费 · 本地处理 · 视频不上传 · 隐私安全</p>
+    <p class="sub">上传图片 · 自动打码 · 毫秒完成 · 图片不上传</p>
     <p class="lang-switch"><a href="en/">English</a></p>
     <div class="trust-badges">
-      <span>🔒 视频不上传</span>
+      <span>🔒 图片不上传</span>
       <span>🚫 没有服务器</span>
+      <span>⚡ 秒出结果</span>
       <span>🆓 完全免费</span>
-      <span>⚡ 无需注册</span>
       <span>💧 无水印</span>
     </div>
   </header>
@@ -35,24 +35,26 @@
   <!-- ============ 广告位 1：顶部横幅 ============ -->
   <div class="ad-slot ad-top">
     <!-- 顶部广告位（审核通过后替换成 AdSense 广告单元代码） -->
-    <!-- <ins class="adsbygoogle" style="display:block" data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
-         data-ad-slot="0000000000" data-ad-format="auto" data-full-width-responsive="true"></ins>
-    <script>(adsbygoogle = window.adsbygoogle || []).push({});</script> -->
   </div>
 
   <section id="uploadPanel" class="panel">
     <div id="dropZone" class="drop-zone">
-      <div class="drop-icon">🎬</div>
-      <p>点击选择视频，或拖拽视频到此处</p>
-      <p class="hint">支持 MP4 / MOV / WebM / MKV</p>
-      <input type="file" id="fileInput" accept="video/*" hidden>
+      <div class="drop-icon">🖼️</div>
+      <p>点击选择图片，或拖拽图片到此处</p>
+      <p class="hint">支持 JPG / PNG / WebP / BMP · 支持粘贴（Ctrl+V）</p>
+      <input type="file" id="fileInput" accept="image/*" hidden>
     </div>
   </section>
 
   <section id="workPanel" class="panel hidden">
-    <video id="preview" controls playsinline></video>
+    <div class="canvas-wrap">
+      <canvas id="resultCanvas"></canvas>
+    </div>
+    <canvas id="srcCanvas" hidden></canvas>
 
-    <div class="controls">
+    <p id="faceInfo" class="face-info">—</p>
+
+    <div class="controls" id="sliderRow">
       <label class="ctrl">
         <span>马赛克强度 <b id="pixelVal">12</b></span>
         <input type="range" id="pixelSize" min="4" max="40" value="12">
@@ -76,29 +78,12 @@
     </div>
 
     <div class="actions">
-      <button id="startBtn" class="btn primary">▶ 开始处理</button>
-      <button id="cancelBtn" class="btn" disabled>取消</button>
-      <button id="resetBtn" class="btn">重新选择</button>
-    </div>
-
-    <div id="progressWrap" class="progress-wrap hidden">
-      <div class="progress-bar"><div id="progressFill"></div></div>
-      <p id="progressText">准备中…</p>
-    </div>
-
-    <canvas id="workCanvas" class="hidden"></canvas>
-  </section>
-
-  <section id="resultPanel" class="panel hidden">
-    <h2>✅ 处理完成</h2>
-    <video id="resultVideo" controls playsinline></video>
-    <div class="actions">
-      <a id="downloadBtn" class="btn primary" download="mosaic_output.webm">⬇ 下载视频</a>
-      <button id="againBtn" class="btn">处理其他视频</button>
+      <a id="downloadBtn" class="btn primary" download="image_mosaic.jpg">⬇ 下载图片</a>
+      <button id="resetBtn" class="btn">处理其他图片</button>
     </div>
   </section>
 
-  <!-- ============ 广告位 2：流程下方 ============ -->
+  <!-- ============ 广告位 2：中部 ============ -->
   <div class="ad-slot ad-mid">
     <!-- 中部广告位（审核通过后替换成 AdSense 广告单元代码） -->
   </div>
@@ -110,29 +95,29 @@
   <div class="features">
     <div class="feature hero">
       <div class="f-icon">🔒</div>
-      <h3>视频不上传，没有服务器</h3>
+      <h3>图片不上传，没有服务器</h3>
       <p>这不是一句口号——本站<b>根本没有后台服务器</b>。所有处理都在你的浏览器里完成，
-         视频从始至终没有离开你的设备，我们<b>技术上无法</b>保存你的视频。</p>
+         图片从始至终没有离开你的设备，我们<b>技术上无法</b>保存你的图片。</p>
+    </div>
+    <div class="feature">
+      <div class="f-icon">⚡</div>
+      <h3>毫秒级完成，不用等</h3>
+      <p>图片单帧处理，参数一改立刻重绘，不用像视频工具那样等几分钟。</p>
     </div>
     <div class="feature">
       <div class="f-icon">🆓</div>
       <h3>完全免费，永久免费</h3>
-      <p>不限次数、不限时长、不收费，也不需要注册登录。打开网页就能用。</p>
+      <p>不限次数、不限张数、不收费，也不需要注册登录。打开网页就能用。</p>
     </div>
     <div class="feature">
       <div class="f-icon">💧</div>
-      <h3>无水印，无强制分享</h3>
-      <p>下载的视频干净无水印，不会要求你分享到社交平台才能保存。</p>
-    </div>
-    <div class="feature">
-      <div class="f-icon">✈️</div>
-      <h3>断网也能用</h3>
-      <p>首次打开后，即使断开网络也能正常处理视频——因为计算全在你本地。</p>
+      <h3>无水印，原图分辨率</h3>
+      <p>下载的图片干净无水印，保持原始分辨率不压缩，可直接发布使用。</p>
     </div>
     <div class="feature">
       <div class="f-icon">🎨</div>
       <h3>三种打码效果</h3>
-      <p>像素马赛克、高斯模糊、黑块遮挡，可调强度和范围，满足不同场景需求。</p>
+      <p>像素马赛克、高斯模糊、黑块遮挡，强度和范围都可调，实时预览。</p>
     </div>
     <div class="feature">
       <div class="f-icon">📱</div>
@@ -148,56 +133,55 @@
         <tr><th>对比项</th><th>常见在线工具</th><th>本工具</th></tr>
       </thead>
       <tbody>
-        <tr><td>视频是否上传服务器</td><td>❌ 需要上传</td><td class="us">✅ 从不上传</td></tr>
-        <tr><td>服务器能否保存你的视频</td><td>⚠️ 技术上可以</td><td class="us">✅ 没有服务器，存不了</td></tr>
+        <tr><td>图片是否上传服务器</td><td>❌ 需要上传</td><td class="us">✅ 从不上传</td></tr>
+        <tr><td>服务器能否保存你的图片</td><td>⚠️ 技术上可以</td><td class="us">✅ 没有服务器，存不了</td></tr>
+        <tr><td>处理速度</td><td>需排队等待</td><td class="us">✅ 毫秒级</td></tr>
         <tr><td>是否需要注册</td><td>常见要求</td><td class="us">✅ 不需要</td></tr>
-        <tr><td>是否收费 / 限时长</td><td>常有限制</td><td class="us">✅ 免费无限</td></tr>
+        <tr><td>是否收费 / 限张数</td><td>常有限制</td><td class="us">✅ 免费无限</td></tr>
         <tr><td>是否加水印</td><td>常见水印</td><td class="us">✅ 无水印</td></tr>
-        <tr><td>断网可用</td><td>❌ 不可用</td><td class="us">✅ 可用</td></tr>
+        <tr><td>是否压缩画质</td><td>常被压缩</td><td class="us">✅ 保持原分辨率</td></tr>
         <tr><td>数据泄露风险</td><td>取决于对方服务器</td><td class="us">✅ 零风险（不传数据）</td></tr>
       </tbody>
     </table>
     <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px">
-      💡 你可以按 F12 打开浏览器开发者工具 → Network 面板 → 处理视频，
-      会看到<b>没有任何视频数据被发送出去</b>。
+      💡 你可以按 F12 打开浏览器开发者工具 → Network 面板 → 处理图片，
+      会看到<b>没有任何图片数据被发送出去</b>。
     </p>
   </section>
 
   <!-- ============ 内容区（SEO + AdSense 过审必需）============ -->
   <section class="panel content">
     <h2>📖 使用说明</h2>
+
     <h3>这个工具能做什么？</h3>
-    <p>上传一段视频，工具会自动识别画面中的人脸并打上马赛克，处理完成后可下载。
-       适用于发布短视频前隐藏路人面孔、保护未成年人隐私、处理监控录像等场景。</p>
+    <p>上传一张图片，工具会自动识别画面中的人脸并打上马赛克，瞬间完成，可直接下载。
+       适用于发布照片前隐藏路人面孔、给证件照/合影打码、处理截图中的隐私信息等场景。</p>
 
     <h3>操作步骤</h3>
     <ol>
-      <li><b>上传视频</b>：点击上传区域选择文件，或直接把视频拖进去。</li>
-      <li><b>调整参数</b>：马赛克强度（数字越大越模糊）、检测灵敏度（漏检就调低）、
+      <li><b>上传图片</b>：点击上传区域选择文件，或直接把图片拖进去（也支持 Ctrl+V 粘贴）。</li>
+      <li><b>自动打码</b>：图片加载后自动检测人脸并打码，立即显示结果。</li>
+      <li><b>调整参数</b>：拖动滑块实时预览——
+          马赛克强度（数字越大越模糊）、检测灵敏度（漏检就调低）、
           打码范围扩展（脸打不全就调大）、效果类型（马赛克/模糊/黑块）。</li>
-      <li><b>开始处理</b>：点「开始处理」，等待进度条走完（耗时约等于视频时长）。</li>
-      <li><b>下载结果</b>：点「下载视频」保存处理后的文件。</li>
+      <li><b>下载结果</b>：点「下载图片」保存处理后的图片（保持原分辨率）。</li>
     </ol>
 
     <h3>常见问题</h3>
-    <p><b>Q：视频会被上传到服务器吗？</b><br>
-       A：不会。所有处理都在你的浏览器里完成，视频文件不会离开你的设备，断网也能用。</p>
-    <p><b>Q：为什么处理速度等于视频时长？</b><br>
-       A：为了保证逐帧检测不丢帧，工具采用实时处理（边播放边打码边录制），
-       所以 1 分钟的视频大约需要 1 分钟处理。</p>
+    <p><b>Q：图片会被上传到服务器吗？</b><br>
+       A：不会。所有处理都在你的浏览器里完成，图片不会离开你的设备，断网也能用。</p>
+    <p><b>Q：为什么比视频工具快这么多？</b><br>
+       A：图片只需处理一帧，而视频要逐帧处理并实时录制编码。所以本工具毫秒级出结果。</p>
     <p><b>Q：有脸没被打码怎么办？</b><br>
-       A：把「打码范围扩展」调大到 20-30%，或把「检测灵敏度」调低到 0.3，
-       然后重新处理。侧脸、强遮挡、极小的脸识别率会偏低。</p>
-    <p><b>Q：输出是什么格式？</b><br>
-       A：默认 WebM（VP8/VP9 编码），主流播放器和社交平台都支持；
-       浏览器支持时也可能输出 MP4。</p>
-    <p><b>Q：处理到一半卡住或切页面会怎样？</b><br>
-       A：浏览器会降低后台标签页的运行频率，可能导致录制掉帧。
-       处理过程中请不要切换标签页或最小化窗口。</p>
+       A：把「打码范围扩展」调大到 20-30%，或把「检测灵敏度」调低到 0.3。
+       侧脸、强遮挡、极小的脸识别率会偏低。</p>
+    <p><b>Q：会压缩画质吗？</b><br>
+       A：不会降低分辨率，输出保持原图尺寸，以 JPEG 高质量（95%）保存。</p>
+    <p><b>Q：支持一次处理多张吗？</b><br>
+       A：当前版本一次处理一张，批量功能正在开发中。</p>
 
     <h3>支持的浏览器</h3>
-    <p>Chrome、Edge、Firefox、Safari 的较新版本（需支持 MediaRecorder 与 canvas 录制）。
-       推荐使用 Chrome 或 Edge 获得最佳效果。</p>
+    <p>Chrome、Edge、Firefox、Safari 的较新版本。推荐使用 Chrome 或 Edge 获得最佳效果。</p>
   </section>
 
   <!-- ============ 广告位 3：底部 ============ -->
@@ -206,7 +190,7 @@
   </div>
 
   <footer>
-    <p>纯浏览器端运行 · 基于 face-api.js · 视频不离开你的设备</p>
+    <p>纯浏览器端运行 · 基于 face-api.js · 图片不离开你的设备</p>
     <nav class="foot-nav">
       <a href="about.html">关于我们</a> ·
       <a href="privacy.html">隐私政策</a> ·

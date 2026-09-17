@@ -18,23 +18,24 @@
 
   <section class="panel content">
     <h2>Why we built this</h2>
-    <p>Blurring faces before publishing a video is a common need: hiding bystanders in street
-       footage, protecting children's privacy in family clips, or censoring customer faces in
-       surveillance recordings. The usual options are paid software, or uploading your video to
-       an unknown server — the latter carries a real privacy risk.</p>
-    <p>So we built this: <b>all processing happens inside your browser</b>. Your video never
+    <p>Blurring faces before publishing a photo is a common need: hiding bystanders in street
+       shots, protecting children's privacy in family photos, or censoring customer faces in
+       screenshots. The usual options are paid software, or uploading your image to an unknown
+       server — the latter carries a real privacy risk.</p>
+    <p>So we built this: <b>all processing happens inside your browser</b>. Your image never
        leaves your device. No sign-up, no fees, no usage limits.</p>
 
     <h2>How it works</h2>
     <p>The tool has three parts:</p>
     <ol>
       <li><b>Face detection</b> — uses face-api.js with the TinyFaceDetector model (~190 KB) to
-          scan each frame for faces. Frames are downsampled to 320 px wide for detection,
+          scan for faces. Images are downsampled to a 640 px longest side for detection,
           balancing speed and accuracy.</li>
       <li><b>Blurring</b> — draws the face regions on a Canvas using pixelation
-          (downsample-and-upscale), multi-pass blur, or a solid black box.</li>
-      <li><b>Video export</b> — records the Canvas via the browser's MediaRecorder API and keeps
-          the original audio track, producing a downloadable video file.</li>
+          (downsample-and-upscale), multi-pass blur, or a solid black box, at the original
+          resolution so no detail is lost.</li>
+      <li><b>Image export</b> — exports the Canvas via toBlob() as a high-quality JPEG (95%) at the
+          original resolution.</li>
     </ol>
     <p>No server-side computation is involved, so it even works offline.</p>
 

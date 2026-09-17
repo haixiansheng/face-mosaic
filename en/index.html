@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Face Mosaic Tool — Blur Faces in Videos Online (Free &amp; Private)</title>
-<meta name="description" content="Free online face mosaic tool. Upload a video and automatically blur or pixelate faces. Supports pixelation, Gaussian blur and black-box censor. Runs entirely in your browser — your video is never uploaded.">
-<meta name="keywords" content="face mosaic, blur faces in video, video face blur, censor faces, pixelate face, anonymize video, privacy video tool, face blur online">
+<title>Face Mosaic Tool — Blur Faces in Photos Online (Free &amp; Private)</title>
+<meta name="description" content="Free online face mosaic tool. Upload a photo and instantly blur, pixelate or black-box faces. Runs entirely in your browser — your image is never uploaded.">
+<meta name="keywords" content="face mosaic, blur faces in photo, photo face blur, censor faces, pixelate face, anonymize photo, face blur online, hide faces in picture">
 <link rel="alternate" hreflang="zh-CN" href="https://haixiansheng.github.io/face-mosaic/" />
 <link rel="alternate" hreflang="en" href="https://haixiansheng.github.io/face-mosaic/en/" />
 <link rel="alternate" hreflang="x-default" href="https://haixiansheng.github.io/face-mosaic/en/" />
@@ -21,13 +21,13 @@
 <div class="app">
   <header>
     <h1>🔒 Face Mosaic Tool</h1>
-    <p class="sub">Free · Runs locally · Your video is never uploaded</p>
+    <p class="sub">Upload a photo · Auto blur · Instant result · Never uploaded</p>
     <p class="lang-switch"><a href="../">中文版</a></p>
     <div class="trust-badges">
       <span>🔒 No upload</span>
       <span>🚫 No server</span>
+      <span>⚡ Instant</span>
       <span>🆓 100% free</span>
-      <span>⚡ No sign-up</span>
       <span>💧 No watermark</span>
     </div>
   </header>
@@ -37,17 +37,22 @@
 
   <section id="uploadPanel" class="panel">
     <div id="dropZone" class="drop-zone">
-      <div class="drop-icon">🎬</div>
-      <p>Click to choose a video, or drag &amp; drop it here</p>
-      <p class="hint">Supports MP4 / MOV / WebM / MKV</p>
-      <input type="file" id="fileInput" accept="video/*" hidden>
+      <div class="drop-icon">🖼️</div>
+      <p>Click to choose an image, or drag &amp; drop it here</p>
+      <p class="hint">Supports JPG / PNG / WebP / BMP · Paste with Ctrl+V</p>
+      <input type="file" id="fileInput" accept="image/*" hidden>
     </div>
   </section>
 
   <section id="workPanel" class="panel hidden">
-    <video id="preview" controls playsinline></video>
+    <div class="canvas-wrap">
+      <canvas id="resultCanvas"></canvas>
+    </div>
+    <canvas id="srcCanvas" hidden></canvas>
 
-    <div class="controls">
+    <p id="faceInfo" class="face-info">—</p>
+
+    <div class="controls" id="sliderRow">
       <label class="ctrl">
         <span>Mosaic strength <b id="pixelVal">12</b></span>
         <input type="range" id="pixelSize" min="4" max="40" value="12">
@@ -71,25 +76,8 @@
     </div>
 
     <div class="actions">
-      <button id="startBtn" class="btn primary">▶ Start processing</button>
-      <button id="cancelBtn" class="btn" disabled>Cancel</button>
-      <button id="resetBtn" class="btn">Choose another</button>
-    </div>
-
-    <div id="progressWrap" class="progress-wrap hidden">
-      <div class="progress-bar"><div id="progressFill"></div></div>
-      <p id="progressText">Preparing…</p>
-    </div>
-
-    <canvas id="workCanvas" class="hidden"></canvas>
-  </section>
-
-  <section id="resultPanel" class="panel hidden">
-    <h2>✅ Done</h2>
-    <video id="resultVideo" controls playsinline></video>
-    <div class="actions">
-      <a id="downloadBtn" class="btn primary" download="mosaic_output.webm">⬇ Download video</a>
-      <button id="againBtn" class="btn">Process another video</button>
+      <a id="downloadBtn" class="btn primary" download="image_mosaic.jpg">⬇ Download image</a>
+      <button id="resetBtn" class="btn">Process another image</button>
     </div>
   </section>
 
@@ -98,36 +86,36 @@
 
   <!-- ============ Selling points ============ -->
   <h2 class="section-title">Why choose this tool</h2>
-  <p class="section-sub">The only face blurring tool that literally <em>cannot</em> store your video</p>
+  <p class="section-sub">The only face blurring tool that literally <em>cannot</em> store your image</p>
 
   <div class="features">
     <div class="feature hero">
       <div class="f-icon">🔒</div>
       <h3>No upload, no server</h3>
       <p>This isn't marketing talk — there is <b>no backend server at all</b>. Everything runs in
-         your browser, your video never leaves your device, and we are
+         your browser, your image never leaves your device, and we are
          <b>technically unable</b> to store it.</p>
+    </div>
+    <div class="feature">
+      <div class="f-icon">⚡</div>
+      <h3>Instant — no waiting</h3>
+      <p>A photo is a single frame. Move a slider and the result redraws immediately,
+         unlike video tools that make you wait minutes.</p>
     </div>
     <div class="feature">
       <div class="f-icon">🆓</div>
       <h3>Completely free, forever</h3>
-      <p>Unlimited videos, no length cap, no fees, no account. Just open the page and go.</p>
+      <p>Unlimited images, no fees, no account. Just open the page and go.</p>
     </div>
     <div class="feature">
       <div class="f-icon">💧</div>
-      <h3>No watermark, no forced sharing</h3>
-      <p>Your download is clean. We never ask you to post on social media to unlock saving.</p>
-    </div>
-    <div class="feature">
-      <div class="f-icon">✈️</div>
-      <h3>Works offline</h3>
-      <p>After the first load you can disconnect from the internet and still process videos —
-         all computation is local.</p>
+      <h3>No watermark, full resolution</h3>
+      <p>Clean downloads at the original resolution — ready to publish.</p>
     </div>
     <div class="feature">
       <div class="f-icon">🎨</div>
       <h3>Three censor effects</h3>
-      <p>Pixel mosaic, Gaussian blur or solid black box — with adjustable strength and padding.</p>
+      <p>Pixel mosaic, Gaussian blur or solid black box — adjustable, with live preview.</p>
     </div>
     <div class="feature">
       <div class="f-icon">📱</div>
@@ -143,18 +131,19 @@
         <tr><th>&nbsp;</th><th>Typical online tools</th><th>This tool</th></tr>
       </thead>
       <tbody>
-        <tr><td>Uploads your video?</td><td>❌ Yes</td><td class="us">✅ Never</td></tr>
-        <tr><td>Server could store your video?</td><td>⚠️ Technically yes</td><td class="us">✅ No server at all</td></tr>
+        <tr><td>Uploads your image?</td><td>❌ Yes</td><td class="us">✅ Never</td></tr>
+        <tr><td>Server could store your image?</td><td>⚠️ Technically yes</td><td class="us">✅ No server at all</td></tr>
+        <tr><td>Processing speed</td><td>Queue / wait</td><td class="us">✅ Instant</td></tr>
         <tr><td>Account required?</td><td>Often</td><td class="us">✅ None</td></tr>
-        <tr><td>Fees or length limits?</td><td>Common</td><td class="us">✅ Free &amp; unlimited</td></tr>
+        <tr><td>Fees or limits?</td><td>Common</td><td class="us">✅ Free &amp; unlimited</td></tr>
         <tr><td>Watermark?</td><td>Common</td><td class="us">✅ None</td></tr>
-        <tr><td>Works offline?</td><td>❌ No</td><td class="us">✅ Yes</td></tr>
+        <tr><td>Compresses your photo?</td><td>Often re-encoded</td><td class="us">✅ Original resolution</td></tr>
         <tr><td>Data breach risk</td><td>Depends on their servers</td><td class="us">✅ Zero (no data sent)</td></tr>
       </tbody>
     </table>
     <p style="text-align:center;font-size:12px;color:var(--muted);margin-top:12px">
-      💡 Verify it yourself: press F12 → Network tab → process a video.
-      You'll see <b>no video data is ever sent</b>.
+      💡 Verify it yourself: press F12 → Network tab → process an image.
+      You'll see <b>no image data is ever sent</b>.
     </p>
   </section>
 
@@ -163,50 +152,43 @@
     <h2>📖 How to use</h2>
 
     <h3>What does this tool do?</h3>
-    <p>Upload a video and the tool automatically detects faces in every frame and blurs them out.
-       When processing finishes you can download the result. It is useful for hiding bystanders
-       before posting street videos, protecting children's privacy in family clips, or censoring
-       customer faces in surveillance footage.</p>
+    <p>Upload a photo and the tool automatically detects faces and blurs them out — instantly.
+       Download the result right away. Useful for hiding bystanders before posting photos,
+       censoring ID photos or group shots, and removing private details from screenshots.</p>
 
     <h3>Steps</h3>
     <ol>
-      <li><b>Upload a video</b> — click the upload area, or drag &amp; drop your file.</li>
-      <li><b>Tune the settings</b> — mosaic strength (higher = blurrier),
-          detection sensitivity (lower it if faces are missed),
-          blur area padding (increase if faces are partially covered),
-          and the effect type (pixelation / blur / black box).</li>
-      <li><b>Start processing</b> — click “Start processing” and wait for the progress bar.
-          Processing takes roughly as long as the video duration.</li>
-      <li><b>Download</b> — click “Download video” to save the result.</li>
+      <li><b>Upload an image</b> — click the upload area, drag &amp; drop, or paste with Ctrl+V.</li>
+      <li><b>Auto blur</b> — the tool detects faces and blurs them as soon as the image loads.</li>
+      <li><b>Tune it</b> — drag the sliders for a live preview: mosaic strength, detection
+          sensitivity (lower it if faces are missed), blur padding, and effect type.</li>
+      <li><b>Download</b> — click “Download image” to save the result at full resolution.</li>
     </ol>
 
     <h3>FAQ</h3>
-    <p><b>Q: Is my video uploaded to a server?</b><br>
-       A: No. Everything happens inside your browser. Your video never leaves your device,
-       and the tool even works offline.</p>
-    <p><b>Q: Why does processing take as long as the video itself?</b><br>
-       A: To guarantee that no frame is skipped, the tool processes in real time
-       (playback → detection → blur → recording). A 1-minute video takes about 1 minute.</p>
+    <p><b>Q: Is my image uploaded to a server?</b><br>
+       A: No. Everything happens inside your browser. Your image never leaves your device,
+       and the tool works offline.</p>
+    <p><b>Q: Why is this so much faster than video tools?</b><br>
+       A: A photo is a single frame, whereas video requires per-frame processing and real-time
+       encoding. That's why this tool returns a result in milliseconds.</p>
     <p><b>Q: Some faces were not blurred. What should I do?</b><br>
-       A: Increase “Blur area padding” to 20–30%, or lower “Detection sensitivity” to 0.3,
-       then process again. Profiles, heavy occlusion and very small faces are harder to detect.</p>
-    <p><b>Q: What output format do I get?</b><br>
-       A: WebM (VP8/VP9) by default, which plays on all major platforms.
-       MP4 may be produced when your browser supports it.</p>
-    <p><b>Q: What if I switch tabs while processing?</b><br>
-       A: Browsers throttle background tabs, which can drop frames in the recording.
-       Please keep the tab in the foreground while processing.</p>
+       A: Increase “Blur area padding” to 20–30%, or lower “Detection sensitivity” to 0.3.
+       Profiles, heavy occlusion and very small faces are harder to detect.</p>
+    <p><b>Q: Does it reduce image quality?</b><br>
+       A: No downscaling. Output keeps the original dimensions, saved as high-quality JPEG (95%).</p>
+    <p><b>Q: Can I process multiple images at once?</b><br>
+       A: The current version handles one image at a time. Batch mode is in development.</p>
 
     <h3>Supported browsers</h3>
-    <p>Recent versions of Chrome, Edge, Firefox and Safari (MediaRecorder + canvas capture).
-       Chrome or Edge give the best results.</p>
+    <p>Recent versions of Chrome, Edge, Firefox and Safari. Chrome or Edge give the best results.</p>
   </section>
 
   <!-- ============ Ad slot 3: bottom ============ -->
   <div class="ad-slot ad-bottom"></div>
 
   <footer>
-    <p>Runs entirely in your browser · Powered by face-api.js · Your video never leaves your device</p>
+    <p>Runs entirely in your browser · Powered by face-api.js · Your image never leaves your device</p>
     <nav class="foot-nav">
       <a href="about.html">About</a> ·
       <a href="privacy.html">Privacy Policy</a> ·

@@ -108,6 +108,8 @@ h2 { font-size: 18px; margin-bottom: 14px; }
   text-align: center;
 }
 .ad-top { min-height: 100px; }
+.ad-mid { min-height: 250px; }
+.ad-bottom { min-height: 90px; }
 
 /* ===== 内容区（SEO / 过审用）===== */
 .content { font-size: 14px; line-height: 1.85; color: #c3c9d6; }
@@ -209,3 +211,20 @@ h2 { font-size: 18px; margin-bottom: 14px; }
 .compare-table td { color: #c3c9d6; }
 .compare-table td.us { color: var(--success); font-weight: 600; }
 .compare-table tr:last-child td { border-bottom: none; }
+
+/* ===== 图片画布 ===== */
+.canvas-wrap {
+  border-radius: 10px;
+  overflow: hidden;
+  background: #0b0d11;
+  display: flex;
+  justify-content: center;
+}
+#resultCanvas { max-width: 100%; height: auto; display: block; }
+.face-info {
+  text-align: center;
+  font-size: 13px;
+  color: var(--primary);
+  margin: 12px 0 0;
+  min-height: 20px;
+}

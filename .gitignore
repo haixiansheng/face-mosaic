@@ -2,3 +2,6 @@
 test_*.png
 __pycache__/
 .DS_Store
+lena.jpg
+selftest.html
+out*.html
