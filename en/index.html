@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Face Mosaic Tool — Blur Faces in Videos Online (Free &amp; Private)</title>
+<meta name="description" content="Free online face mosaic tool. Upload a video and automatically blur or pixelate faces. Supports pixelation, Gaussian blur and black-box censor. Runs entirely in your browser — your video is never uploaded.">
+<meta name="keywords" content="face mosaic, blur faces in video, video face blur, censor faces, pixelate face, anonymize video, privacy video tool, face blur online">
+<link rel="alternate" hreflang="zh-CN" href="https://haixiansheng.github.io/face-mosaic/" />
+<link rel="alternate" hreflang="en" href="https://haixiansheng.github.io/face-mosaic/en/" />
+<link rel="alternate" hreflang="x-default" href="https://haixiansheng.github.io/face-mosaic/en/" />
+<link rel="stylesheet" href="../style.css">
+
+<!-- ============ Google AdSense ============ -->
+<!-- After approval, replace ca-pub-XXXXXXXXXXXXXXXX with your publisher ID and uncomment -->
+<!--
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXXXXXXXXXX" crossorigin="anonymous"></script>
+-->
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>🔒 Face Mosaic Tool</h1>
+    <p class="sub">Free · Runs locally · Your video is never uploaded</p>
+    <p class="lang-switch"><a href="../">中文版</a></p>
+  </header>
+
+  <!-- ============ Ad slot 1: top banner ============ -->
+  <div class="ad-slot ad-top"></div>
+
+  <section id="uploadPanel" class="panel">
+    <div id="dropZone" class="drop-zone">
+      <div class="drop-icon">🎬</div>
+      <p>Click to choose a video, or drag &amp; drop it here</p>
+      <p class="hint">Supports MP4 / MOV / WebM / MKV</p>
+      <input type="file" id="fileInput" accept="video/*" hidden>
+    </div>
+  </section>
+
+  <section id="workPanel" class="panel hidden">
+    <video id="preview" controls playsinline></video>
+
+    <div class="controls">
+      <label class="ctrl">
+        <span>Mosaic strength <b id="pixelVal">12</b></span>
+        <input type="range" id="pixelSize" min="4" max="40" value="12">
+      </label>
+      <label class="ctrl">
+        <span>Detection sensitivity <b id="confVal">0.5</b></span>
+        <input type="range" id="confThresh" min="0.1" max="0.9" step="0.05" value="0.5">
+      </label>
+      <label class="ctrl">
+        <span>Blur area padding <b id="expandVal">10</b>%</span>
+        <input type="range" id="expand" min="0" max="40" value="10">
+      </label>
+      <label class="ctrl">
+        <span>Effect</span>
+        <select id="effectType">
+          <option value="mosaic">Pixel mosaic</option>
+          <option value="blur">Gaussian blur</option>
+          <option value="black">Black box</option>
+        </select>
+      </label>
+    </div>
+
+    <div class="actions">
+      <button id="startBtn" class="btn primary">▶ Start processing</button>
+      <button id="cancelBtn" class="btn" disabled>Cancel</button>
+      <button id="resetBtn" class="btn">Choose another</button>
+    </div>
+
+    <div id="progressWrap" class="progress-wrap hidden">
+      <div class="progress-bar"><div id="progressFill"></div></div>
+      <p id="progressText">Preparing…</p>
+    </div>
+
+    <canvas id="workCanvas" class="hidden"></canvas>
+  </section>
+
+  <section id="resultPanel" class="panel hidden">
+    <h2>✅ Done</h2>
+    <video id="resultVideo" controls playsinline></video>
+    <div class="actions">
+      <a id="downloadBtn" class="btn primary" download="mosaic_output.webm">⬇ Download video</a>
+      <button id="againBtn" class="btn">Process another video</button>
+    </div>
+  </section>
+
+  <!-- ============ Ad slot 2: middle ============ -->
+  <div class="ad-slot ad-mid"></div>
+
+  <!-- ============ Content (SEO + AdSense compliance) ============ -->
+  <section class="panel content">
+    <h2>📖 How to use</h2>
+
+    <h3>What does this tool do?</h3>
+    <p>Upload a video and the tool automatically detects faces in every frame and blurs them out.
+       When processing finishes you can download the result. It is useful for hiding bystanders
+       before posting street videos, protecting children's privacy in family clips, or censoring
+       customer faces in surveillance footage.</p>
+
+    <h3>Steps</h3>
+    <ol>
+      <li><b>Upload a video</b> — click the upload area, or drag &amp; drop your file.</li>
+      <li><b>Tune the settings</b> — mosaic strength (higher = blurrier),
+          detection sensitivity (lower it if faces are missed),
+          blur area padding (increase if faces are partially covered),
+          and the effect type (pixelation / blur / black box).</li>
+      <li><b>Start processing</b> — click “Start processing” and wait for the progress bar.
+          Processing takes roughly as long as the video duration.</li>
+      <li><b>Download</b> — click “Download video” to save the result.</li>
+    </ol>
+
+    <h3>FAQ</h3>
+    <p><b>Q: Is my video uploaded to a server?</b><br>
+       A: No. Everything happens inside your browser. Your video never leaves your device,
+       and the tool even works offline.</p>
+    <p><b>Q: Why does processing take as long as the video itself?</b><br>
+       A: To guarantee that no frame is skipped, the tool processes in real time
+       (playback → detection → blur → recording). A 1-minute video takes about 1 minute.</p>
+    <p><b>Q: Some faces were not blurred. What should I do?</b><br>
+       A: Increase “Blur area padding” to 20–30%, or lower “Detection sensitivity” to 0.3,
+       then process again. Profiles, heavy occlusion and very small faces are harder to detect.</p>
+    <p><b>Q: What output format do I get?</b><br>
+       A: WebM (VP8/VP9) by default, which plays on all major platforms.
+       MP4 may be produced when your browser supports it.</p>
+    <p><b>Q: What if I switch tabs while processing?</b><br>
+       A: Browsers throttle background tabs, which can drop frames in the recording.
+       Please keep the tab in the foreground while processing.</p>
+
+    <h3>Supported browsers</h3>
+    <p>Recent versions of Chrome, Edge, Firefox and Safari (MediaRecorder + canvas capture).
+       Chrome or Edge give the best results.</p>
+  </section>
+
+  <!-- ============ Ad slot 3: bottom ============ -->
+  <div class="ad-slot ad-bottom"></div>
+
+  <footer>
+    <p>Runs entirely in your browser · Powered by face-api.js · Your video never leaves your device</p>
+    <nav class="foot-nav">
+      <a href="about.html">About</a> ·
+      <a href="privacy.html">Privacy Policy</a> ·
+      <a href="https://github.com/haixiansheng/face-mosaic" target="_blank" rel="noopener">Source code</a>
+    </nav>
+    <p class="copy">© 2026 Face Mosaic · For lawful use only. Do not use to violate others' privacy.</p>
+  </footer>
+</div>
+<script src="../face-api.min.js"></script>
+<script src="../app.js"></script>
+</body>
+</html>

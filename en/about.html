@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About · Face Mosaic Tool</title>
+<meta name="description" content="About the Face Mosaic Tool: why we built it, how it works technically, and our open-source ethos.">
+<link rel="alternate" hreflang="zh-CN" href="https://haixiansheng.github.io/face-mosaic/about.html" />
+<link rel="alternate" hreflang="en" href="https://haixiansheng.github.io/face-mosaic/en/about.html" />
+<link rel="stylesheet" href="../style.css">
+</head>
+<body>
+<div class="app">
+  <header>
+    <h1>About</h1>
+    <p class="sub">A free, open-source, privacy-first online tool</p>
+  </header>
+
+  <section class="panel content">
+    <h2>Why we built this</h2>
+    <p>Blurring faces before publishing a video is a common need: hiding bystanders in street
+       footage, protecting children's privacy in family clips, or censoring customer faces in
+       surveillance recordings. The usual options are paid software, or uploading your video to
+       an unknown server — the latter carries a real privacy risk.</p>
+    <p>So we built this: <b>all processing happens inside your browser</b>. Your video never
+       leaves your device. No sign-up, no fees, no usage limits.</p>
+
+    <h2>How it works</h2>
+    <p>The tool has three parts:</p>
+    <ol>
+      <li><b>Face detection</b> — uses face-api.js with the TinyFaceDetector model (~190 KB) to
+          scan each frame for faces. Frames are downsampled to 320 px wide for detection,
+          balancing speed and accuracy.</li>
+      <li><b>Blurring</b> — draws the face regions on a Canvas using pixelation
+          (downsample-and-upscale), multi-pass blur, or a solid black box.</li>
+      <li><b>Video export</b> — records the Canvas via the browser's MediaRecorder API and keeps
+          the original audio track, producing a downloadable video file.</li>
+    </ol>
+    <p>No server-side computation is involved, so it even works offline.</p>
+
+    <h2>Open source</h2>
+    <p>This project is fully open source (MIT license):
+       <a href="https://github.com/haixiansheng/face-mosaic" target="_blank" rel="noopener">haixiansheng/face-mosaic</a>.
+       Issues and pull requests are welcome.</p>
+
+    <h2>Acceptable use</h2>
+    <p>This tool is for lawful purposes only. Please do not use it to:</p>
+    <ul>
+      <li>Forge or tamper with others' footage for deception or defamation</li>
+      <li>Circumvent lawful surveillance or evidentiary requirements</li>
+      <li>Infringe anyone's legal rights in any way</li>
+    </ul>
+    <p>Users are solely responsible for any legal consequences of misuse.</p>
+
+    <h2>Disclaimer</h2>
+    <p>This tool is provided “as is”, without any guarantee of detection accuracy.
+       Automatic detection may miss faces (profiles, occlusion, very small faces) or produce
+       false positives. Always review the output manually before publishing.</p>
+
+    <h2>Feedback</h2>
+    <p>Found a bug or have a suggestion? Please open an issue on
+       <a href="https://github.com/haixiansheng/face-mosaic/issues" target="_blank" rel="noopener">GitHub</a>.</p>
+  </section>
+
+  <footer>
+    <nav class="foot-nav">
+      <a href="index.html">Home</a> ·
+      <a href="privacy.html">Privacy Policy</a> ·
+      <a href="https://github.com/haixiansheng/face-mosaic" target="_blank" rel="noopener">Source code</a>
+    </nav>
+    <p class="copy">© 2026 Face Mosaic</p>
+  </footer>
+</div>
+</body>
+</html>

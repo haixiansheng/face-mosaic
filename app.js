@@ -5,6 +5,32 @@
 
 const $ = id => document.getElementById(id);
 
+/* ---------- i18n ---------- */
+const I18N = {
+  zh: {
+    loadingModel: '加载人脸检测模型…',
+    modelFail: '人脸检测模型加载失败，请刷新重试。',
+    pickVideo: '请选择视频文件',
+    modelNotReady: '模型还在加载，请稍候…',
+    noData: '未生成视频数据（可能录制失败），请重试或换浏览器。',
+    progress: (p, cur, total, n) => `处理中… ${p.toFixed(0)}%（${cur.toFixed(1)}s / ${total.toFixed(1)}s，当前 ${n} 张脸）`,
+    done: '处理完成 ✅',
+    prep: '准备中…',
+  },
+  en: {
+    loadingModel: 'Loading face detection model…',
+    modelFail: 'Failed to load the face detection model. Please refresh and try again.',
+    pickVideo: 'Please select a video file',
+    modelNotReady: 'Model is still loading, please wait…',
+    noData: 'No video data was produced (recording may have failed). Please retry or use another browser.',
+    progress: (p, cur, total, n) => `Processing… ${p.toFixed(0)}% (${cur.toFixed(1)}s / ${total.toFixed(1)}s, ${n} face(s))`,
+    done: 'Done ✅',
+    prep: 'Preparing…',
+  },
+};
+const LANG = (document.documentElement.lang || 'zh').toLowerCase().startsWith('en') ? 'en' : 'zh';
+const T = I18N[LANG];
+
 const els = {
   dropZone: $('dropZone'), fileInput: $('fileInput'),
   uploadPanel: $('uploadPanel'), workPanel: $('workPanel'), resultPanel: $('resultPanel'),
@@ -32,7 +58,7 @@ let state = {
 /* ---------- 1. 加载模型 ---------- */
 async function loadModel() {
   try {
-    els.progressText && (els.progressText.textContent = '加载人脸检测模型…');
+    els.progressText && (els.progressText.textContent = T.loadingModel);
     await faceapi.nets.tinyFaceDetector.loadFromUri('./models');
     state.modelReady = true;
     window.__modelReady = true;
@@ -40,7 +66,7 @@ async function loadModel() {
   } catch (e) {
     console.error('[model] load failed', e);
     window.__modelError = String(e && e.message || e);
-    alert('人脸检测模型加载失败，请刷新重试。\n' + e.message);
+    alert(T.modelFail + '\n' + e.message);
   }
 }
 
@@ -62,7 +88,7 @@ els.fileInput.addEventListener('change', e => {
 
 function handleFile(file) {
   if (!file.type.startsWith('video/')) {
-    alert('请选择视频文件');
+    alert(T.pickVideo);
     return;
   }
   state.file = file;
@@ -126,7 +152,7 @@ function drawMosaic(ctx, x, y, w, h, blockSize, effect) {
 
 /* ---------- 5. 处理主循环 ---------- */
 async function startProcess() {
-  if (!state.modelReady) { alert('模型还在加载，请稍候…'); return; }
+  if (!state.modelReady) { alert(T.modelNotReady); return; }
   if (state.running) return;
 
   const video = els.preview;
@@ -236,7 +262,7 @@ async function startProcess() {
     // 进度
     const p = Math.min(100, (video.currentTime / total) * 100);
     els.progressFill.style.width = p.toFixed(1) + '%';
-    els.progressText.textContent = `处理中… ${p.toFixed(0)}%（${video.currentTime.toFixed(1)}s / ${total.toFixed(1)}s，当前 ${faceBoxes.length} 张脸）`;
+    els.progressText.textContent = T.progress(p, video.currentTime, total, faceBoxes.length);
   }
 
   function stopAll() {
@@ -264,10 +290,10 @@ function finishProcess(mime) {
   els.startBtn.disabled = false;
   els.cancelBtn.disabled = true;
   els.progressFill.style.width = '100%';
-  els.progressText.textContent = '处理完成 ✅';
+  els.progressText.textContent = T.done;
 
   if (!state.chunks.length) {
-    alert('未生成视频数据（可能录制失败），请重试或换浏览器。');
+    alert(T.noData);
     return;
   }
   const type = mime || 'video/webm';

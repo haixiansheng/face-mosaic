@@ -126,3 +126,15 @@ h2 { font-size: 18px; margin-bottom: 14px; }
 .foot-nav a { color: var(--muted); text-decoration: none; }
 .foot-nav a:hover { color: var(--primary); }
 .copy { margin-top: 8px; font-size: 11px; color: #5a6377; }
+
+/* ===== 语言切换 ===== */
+.lang-switch { margin-top: 10px; font-size: 12px; }
+.lang-switch a {
+  color: var(--muted);
+  text-decoration: none;
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  padding: 4px 14px;
+  transition: all .15s;
+}
+.lang-switch a:hover { color: var(--primary); border-color: var(--primary); }
