@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+
+# 广告爬虫（AdSense 需要）
+User-agent: Mediapartners-Google
+Allow: /
+
+User-agent: AdsBot-Google
+Allow: /
+
+Sitemap: https://haixiansheng.github.io/face-mosaic/sitemap.xml
