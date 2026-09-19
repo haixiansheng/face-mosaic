@@ -56,6 +56,62 @@
 <meta name="twitter:title" content="Face Mosaic Tool — Blur Faces in Photos Online (Free &amp; Private)">
 <meta name="twitter:description" content="Free online face mosaic tool. Upload a photo and instantly blur, pixelate or black-box faces. Runs entirely in your browser — your image is never uploaded.">
 <meta name="twitter:image" content="https://haixiansheng.github.io/face-mosaic/og-en.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "Is my image uploaded to a server?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No. Everything happens inside your browser. Your image never leaves your device, and the tool works offline."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why is this so much faster than video tools?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "A photo is a single frame, whereas video requires per-frame processing and real-time encoding. That's why this tool returns a result in milliseconds."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Some faces were not blurred. What should I do?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Try, in order: ① make sure “Detection mode” is set to Accurate (the default, SSD model); ② lower “Detection sensitivity” to 0.3; ③ increase “Blur area padding” to 20–30%. Large images are automatically tiled to catch small faces; profiles and heavy occlusion may still be missed."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the difference between Accurate and Fast mode?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Accurate uses SSD MobileNetV1 (~5.4 MB) and is clearly better on small and profile faces — recommended for everyday use. Fast uses TinyFaceDetector (193 KB): quick to load and light on memory, best for close-up frontal faces or low-end devices."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does it reduce image quality?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "No downscaling. Output keeps the original dimensions, saved as high-quality JPEG (95%)."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I process multiple images at once?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "The current version handles one image at a time. Batch mode is in development."
+      }
+    }
+  ]
+}
+</script>
 </head>
 <body>
 <div class="app">
