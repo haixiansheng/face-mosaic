@@ -26,14 +26,29 @@ let __faceApiPromise = null;
 function ensureFaceApi() {
   if (window.faceapi) return Promise.resolve();
   if (__faceApiPromise) return __faceApiPromise;
-  __faceApiPromise = new Promise((resolve, reject) => {
+
+  // 候选路径：优先用推导出的站点根，失败则依次回退（防止路径推导异常导致工具不可用）
+  const candidates = [
+    SITE_ROOT + 'face-api.min.js',
+    'face-api.min.js',            // 相对当前页面
+    '../face-api.min.js',
+  ];
+
+  const tryLoad = (i) => new Promise((resolve, reject) => {
+    if (i >= candidates.length) {
+      __faceApiPromise = null;
+      reject(new Error('face-api.js load failed (tried ' + candidates.length + ' paths)'));
+      return;
+    }
     const sc = document.createElement('script');
-    sc.src = SITE_ROOT + 'face-api.min.js';
+    sc.src = candidates[i];
     sc.async = true;
-    sc.onload = () => resolve();
-    sc.onerror = () => { __faceApiPromise = null; reject(new Error('face-api.js load failed')); };
+    sc.onload = () => (window.faceapi ? resolve() : tryLoad(i + 1).then(resolve, reject));
+    sc.onerror = () => { sc.remove(); tryLoad(i + 1).then(resolve, reject); };
     document.head.appendChild(sc);
   });
+
+  __faceApiPromise = tryLoad(0);
   return __faceApiPromise;
 }
 
