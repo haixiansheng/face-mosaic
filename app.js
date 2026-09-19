@@ -8,6 +8,35 @@
  */
 'use strict';
 
+/* ---------- 0. 站点根路径 + face-api.js 懒加载 ----------
+ * face-api.min.js 有 ~322KB，页面一打开就加载会让首屏从 ~11KB 涨到 ~333KB。
+ * 改成用户第一次提供图片时才拉取，首屏保持轻量。
+ * 路径从 app.js 自身的 URL 推导，这样 /en/ 子目录页面也能正确解析。
+ */
+const SITE_ROOT = (() => {
+  let src = document.currentScript && document.currentScript.src;
+  if (!src) {                                   // 回退：从 DOM 里找 app.js 的 script 标签
+    const el = document.querySelector('script[src*="app.js"]');
+    if (el) src = el.src;
+  }
+  return src ? src.replace(/app\.js(\?.*)?$/, '') : './';
+})();
+
+let __faceApiPromise = null;
+function ensureFaceApi() {
+  if (window.faceapi) return Promise.resolve();
+  if (__faceApiPromise) return __faceApiPromise;
+  __faceApiPromise = new Promise((resolve, reject) => {
+    const sc = document.createElement('script');
+    sc.src = SITE_ROOT + 'face-api.min.js';
+    sc.async = true;
+    sc.onload = () => resolve();
+    sc.onerror = () => { __faceApiPromise = null; reject(new Error('face-api.js load failed')); };
+    document.head.appendChild(sc);
+  });
+  return __faceApiPromise;
+}
+
 const $ = id => document.getElementById(id);
 
 /* ---------- i18n ---------- */
@@ -69,10 +98,12 @@ async function ensureModel(mode) {
   els.faceInfo.textContent = T.loadingModel;
   state.loading[key] = (async () => {
     try {
+      await ensureFaceApi();                       // 先按需加载 face-api.js（~322KB）
+      const modelsUri = SITE_ROOT + 'models';
       if (key === 'ssd') {
-        await faceapi.nets.ssdMobilenetv1.loadFromUri('./models');
+        await faceapi.nets.ssdMobilenetv1.loadFromUri(modelsUri);
       } else {
-        await faceapi.nets.tinyFaceDetector.loadFromUri('./models');
+        await faceapi.nets.tinyFaceDetector.loadFromUri(modelsUri);
       }
       state.ready[key] = true;
       window.__modelReady = true;
@@ -188,6 +219,7 @@ async function detectRegion(srcCanvas, region, mode, threshold) {
 
   let dets = [];
   try {
+    await ensureFaceApi();                          // 防御性：正常情况下 ensureModel 已加载
     if (mode === 'fast') {
       dets = await faceapi.detectAllFaces(c, new faceapi.TinyFaceDetectorOptions({
         inputSize: 416, scoreThreshold: threshold,
